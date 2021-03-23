@@ -1,10 +1,92 @@
-<mvc:View controllerName="punto_medicion_individual.punto_medicion_individual.controller.View1" xmlns:mvc="sap.ui.core.mvc"
-	displayBlock="true" xmlns="sap.m">
+<mvc:View controllerName="punto_medicion_individual.punto_medicion_individual.controller.View1" xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:card="sap.f.cards" xmlns:f="sap.ui.layout.form">
 	<Shell id="shell">
 		<App id="app">
 			<pages>
 				<Page id="page" title="{i18n>title}">
-					<content></content>
+					<content>
+						<VBox class="sapUiSmallMargin">
+							<f:SimpleForm id="SimpleFormToolbar" editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4" labelSpanM="4"
+								labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="1" columnsM="1"
+								singleContainerFullSize="false" ariaLabelledBy="Title1">
+								<f:toolbar>
+									<Toolbar id="TB1">
+										<Title id="Title1" text="Documento de medicion"/>
+									</Toolbar>
+								</f:toolbar>
+								<f:content>
+									<Toolbar ariaLabelledBy="Title2">
+										<Title id="Title2" text="Punto de medicion"/>
+									</Toolbar>
+									<Label text="Punto de medida"/>
+									<Input value="" id="puntoDeMedida" showValueHelp="true" valueHelpOnly="true">
+										<layoutData>
+											<l:GridData span="L3 M12 S6"/>
+										</layoutData>
+									</Input>
+									<Button visible="true" press="onSearch" tooltip="Buscar" icon="sap-icon://search" width="10px"/>
+									<Toolbar ariaLabelledBy="Title3">
+										<Title id="Title3" text="Valores de propuesta"/>
+									</Toolbar>
+									<!--<Label text="Fecha y hora medicion"/>-->
+									<!--<Input value="{Street}" editable="false">-->
+									<!--	<layoutData>-->
+									<!--		<l:GridData span="XL2 L1 M3 S4"/>-->
+									<!--	</layoutData>-->
+									<!--</Input>-->
+									<!--<Input value="{HouseNumber}" editable="false">-->
+									<!--	<layoutData>-->
+									<!--		<l:GridData span="XL2 L1 M3 S4"/>-->
+									<!--	</layoutData>-->
+									<!--</Input>-->
+									<Label text="Descripcion"></Label>
+									<Input value="" id="descripcion" editable="false">
+										<layoutData>
+											<l:GridData span="L4 M6 S12"/>
+										</layoutData>
+									</Input>
+									<Label text="Posicion de medida"/>
+									<Input value="" id="posMedida" editable="false">
+										<layoutData>
+											<l:GridData span="L4 M6 S12"/>
+										</layoutData>
+									</Input>
+									<Label text="Unidad"/>
+									<Input value="" id="unidad" editable="false">
+										<layoutData>
+											<l:GridData span="L3 M12 S6"/>
+										</layoutData>
+									</Input>
+									<Label text="Objeto del punto de medida"/>
+									<Input value="" id="objPuntoMedida" editable="false">
+										<layoutData>
+											<l:GridData span="L4 M6 S12"/>
+										</layoutData>
+									</Input>
+									<Label text="Valor medido"/>
+									<Input id="valorMedio" value="">
+										<layoutData>
+											<l:GridData span="L4 M6 S12"/>
+										</layoutData>
+									</Input>
+									<Label text="Diferencia"/>
+									<Input id="diferencia" value="" editable="false">
+										<layoutData>
+											<l:GridData span="L4 M6 S12"/>
+										</layoutData>
+									</Input>
+									<Label text=""/>
+									<Button id="btnCrearDocumento" class="btnEnd" type="Accept" text="Crear documento medicion" icon="sap-icon://create" press="onPress"
+										ariaDescribedBy="accept" width="62%">
+										<layoutData>
+											<FlexItemData growFactor="1"/>
+											<l:GridData span="L4 M6 S12"/>
+										</layoutData>
+									</Button>
+								</f:content>
+							</f:SimpleForm>
+						</VBox>
+					</content>
 				</Page>
 			</pages>
 		</App>
