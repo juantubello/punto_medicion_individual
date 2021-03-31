@@ -5,7 +5,6 @@ sap.ui.define([
 
 	return Controller.extend("punto_medicion_individual.punto_medicion_individual.controller.View1", {
 		onInit: function () {
-
 		}
 	});
 });
