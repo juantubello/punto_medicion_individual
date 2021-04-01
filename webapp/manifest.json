@@ -18,7 +18,8 @@
 				"uri": "/sap/opu/odata/sap/ZPM_AMCR_PUNTO_MEDICION_INDIV_SRV/",
 				"type": "OData",
 				"settings": {
-					"localUri": "localService/metadata.xml"
+					"localUri": "localService/metadata.xml",
+					"annotations": []
 				}
 			}
 		}
@@ -75,6 +76,10 @@
 				},
 				"dataSource": "ZPM_AMCR_PUNTO_MEDICION_INDIV_SRV",
 				"preload": true
+			},
+			"@i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"uri": "i18n/i18n.properties"
 			}
 		},
 		"resources": {
