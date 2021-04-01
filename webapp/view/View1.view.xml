@@ -22,31 +22,11 @@
 									<Label text="Punto de medida"/>
 									<Input id="input" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequested"
 										suggestionItems="{ path: '/puntosMedidaSet', sorter: { path: 'NumPtoMedicion' } }">
-										<core:Item key="{NumPtoMedicion}" text="{NumPtoMedicion} ({NumObjeto}) ({Denominacion})"/>
+										<core:Item key="{NumPtoMedicion}" text="{NumPtoMedicion} ({NumObjeto})"/>
 									</Input>
-									<!--<Select id="select" showSecondaryValues="true" items="{ path: '/puntosMedidaSet' }">-->
-									<!--	<core:ListItem text="{NumPtoMedicion}" additionalText="{Denominacion}"/>-->
-									<!--</Select>-->
-									<!--<Input value="" id="puntoDeMedida" showValueHelp="true" valueHelpOnly="true">-->
-									<!--	<layoutData>-->
-									<!--		<l:GridData span="L3 M12 S6"/>-->
-									<!--	</layoutData>-->
-									<!--</Input>-->
-									<!--<Button visible="true" press="onSearch" tooltip="Buscar" icon="sap-icon://search" width="10px"/>-->
 									<Toolbar ariaLabelledBy="Title3">
 										<Title id="Title3" text="Valores de propuesta"/>
 									</Toolbar>
-									<!--<Label text="Fecha y hora medicion"/>-->
-									<!--<Input value="{Street}" editable="false">-->
-									<!--	<layoutData>-->
-									<!--		<l:GridData span="XL2 L1 M3 S4"/>-->
-									<!--	</layoutData>-->
-									<!--</Input>-->
-									<!--<Input value="{HouseNumber}" editable="false">-->
-									<!--	<layoutData>-->
-									<!--		<l:GridData span="XL2 L1 M3 S4"/>-->
-									<!--	</layoutData>-->
-									<!--</Input>-->
 									<Label text="Descripcion"></Label>
 									<Input value="" id="descripcion" editable="false">
 										<layoutData>

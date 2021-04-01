@@ -1,30 +1,21 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	'sap/ui/model/json/JSONModel',
-	'sap/m/ColumnListItem',
-	'sap/m/Label',
-	'sap/m/Token'
+	"sap/ui/model/json/JSONModel",
+	"sap/m/ColumnListItem",
+	"sap/m/Label",
+	"sap/m/Token"
 ], function (Controller, JSONModel, ColumnListItem, Label, Token) {
 	"use strict";
 
 	return Controller.extend("punto_medicion_individual.punto_medicion_individual.controller.View1", {
 		onInit: function () {
-			this._oInput = this.getView().byId("multiInput");
-			// this._oMultiInput.setTokens(this._getDefaultTokens());
-
-			this.oColModel = new JSONModel(sap.ui.require.toUrl("punto_medicion_individual/punto_medicion_individual/util") +
-				"/columnsModel.json");
-			// this.oProductsModel = new JSONModel(sap.ui.require.toUrl("punto_medicion_individual/punto_medicion_individual/util") + "/products.json");
-
 			this._oInput = this.getView().byId("input");
 			this.oColModel = new JSONModel(sap.ui.require.toUrl("punto_medicion_individual/punto_medicion_individual/util") +
 				"/columnsModel.json");
-			// this.oProductsModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
-			// this.getView().setModel(this.oProductsModel);
 		},
 		onValueHelpRequested: function () {
+			
 			var aCols = this.oColModel.getData().cols;
-
 			this._oValueHelpDialog = sap.ui.xmlfragment("punto_medicion_individual.punto_medicion_individual.fragments.MatchCode", this);
 			this.getView().addDependent(this._oValueHelpDialog);
 
@@ -59,15 +50,12 @@ sap.ui.define([
 		},
 		onValueHelpOkPress: function (oEvent) {
 			var aTokens = oEvent.getParameter("tokens");
-
 			this._oInput.setSelectedKey(aTokens[0].getKey());
 			this._oValueHelpDialog.close();
 		},
-
 		onValueHelpCancelPress: function () {
 			this._oValueHelpDialog.close();
 		},
-
 		onValueHelpAfterClose: function () {
 			this._oValueHelpDialog.destroy();
 		}
