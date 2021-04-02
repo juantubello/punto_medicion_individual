@@ -20,7 +20,7 @@
 										<Title id="Title2" text="Punto de medicion"/>
 									</Toolbar>
 									<Label text="Punto de medida"/>
-									<Input id="puntoMedida" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequested"
+									<Input id="puntoMedida" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequested" 
 										suggestionItems="{ path: '/puntosMedidaSet', sorter: { path: 'NumPtoMedicion' } }">
 										<core:Item key="{NumPtoMedicion}" text="{NumPtoMedicion} ({NumObjeto})"/>
 									</Input>
@@ -64,7 +64,7 @@
 										</layoutData>
 									</Input>
 									<Label text=""/>
-									<Button id="btnCrearDocumento" class="btnEnd" type="Accept" text="Crear documento medicion" icon="sap-icon://create" press="onPress"
+									<Button id="btnCrearDocumento" class="btnEnd" type="Accept" text="Crear documento medicion" icon="sap-icon://create" press="onCrearDocumentoMedicion"
 										ariaDescribedBy="accept" width="62%" enabled="false">
 										<layoutData>
 											<FlexItemData growFactor="1"/>

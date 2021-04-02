@@ -109,6 +109,13 @@ sap.ui.define([
 			btnCrearDoc.setEnabled(false);
 			return;
 		},
+		onCrearDocumentoMedicion: function () {
+			let puntoMedida = this.byId("puntoMedida").getValue().split("(")[0].trim();
+			if (!puntoMedida) {
+				MessageToast.show("Campo Punto de Medida no puede estar vacio");
+				return;
+			}
+		},
 		fillFormData: function () {
 			let that = this;
 			let puntoMedida = this.byId("puntoMedida").getValue().split("(")[0].trim();
