@@ -51,8 +51,8 @@
 											<l:GridData span="L4 M6 S12"/>
 										</layoutData>
 									</Input>
-									<Label text="Valor medido"/>
-									<Input id="valorMedio" value="">
+									<Label text="Valor medido" required="true"/>
+									<Input id="valorMedido" value="" valueLiveUpdate="true" liveChange="onValorMedidoLiveChange">
 										<layoutData>
 											<l:GridData span="L4 M6 S12"/>
 										</layoutData>
@@ -65,7 +65,7 @@
 									</Input>
 									<Label text=""/>
 									<Button id="btnCrearDocumento" class="btnEnd" type="Accept" text="Crear documento medicion" icon="sap-icon://create" press="onPress"
-										ariaDescribedBy="accept" width="62%">
+										ariaDescribedBy="accept" width="62%" enabled="false">
 										<layoutData>
 											<FlexItemData growFactor="1"/>
 											<l:GridData span="L4 M6 S12"/>

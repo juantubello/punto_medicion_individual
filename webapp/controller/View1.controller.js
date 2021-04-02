@@ -7,12 +7,16 @@ sap.ui.define([
 	"sap/m/MessageToast"
 ], function (Controller, JSONModel, ColumnListItem, Label, Token, MessageToast) {
 	"use strict";
-	var url = "/sap/opu/odata/sap/ZPM_AMCR_PUNTO_MEDICION_INDIV_SRV/";
 
-	function obtenerPuntoMedicion(punto) {
+	function obtenerPuntoMedicion(punto, context) {
 		return new Promise(function (resolve, reject) {
 
-			var oDataModelIV = new sap.ui.model.odata.ODataModel(url, {
+			const oResourceBundle = context.getView().getModel("i18n").getResourceBundle();
+			const service = oResourceBundle.getText("service");
+			const puntoMedicionSet = oResourceBundle.getText("getPuntoMedida");
+			const errorMsg = oResourceBundle.getText("errorMsg");
+
+			let oDataModelIV = new sap.ui.model.odata.ODataModel(service, {
 				json: true,
 				headers: {
 					"DataServiceVersion": "2.0",
@@ -27,36 +31,42 @@ sap.ui.define([
 				}
 			});
 
-			var puntoMedida = new sap.ui.model.Filter({
+			let puntoMedida = new sap.ui.model.Filter({
 				path: "PuntoMedida",
 				operator: sap.ui.model.FilterOperator.EQ,
 				value1: punto
 			});
 
-			oDataModelIV.read("/obtenerPuntoMedidaSet", {
+			oDataModelIV.read(puntoMedicionSet, {
 				filters: [puntoMedida],
 				success: function (res) {
 					var oData = res;
 					resolve(oData);
 				},
 				error: function () {
-					this._showToast("Error obteniendo datos");
-					MessageToast.show("Error obteniendo datos de transportes");
+					reject(MessageToast.show(errorMsg));
 				}
 			});
 		});
 	}
-
 	return Controller.extend("punto_medicion_individual.punto_medicion_individual.controller.View1", {
 		onInit: function () {
+
+			const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+			const colModelRoot = oResourceBundle.getText("modelColumnRoot");
+
+			this.byId("btnCrearDocumento").setEnabled(false);
 			this._oInput = this.getView().byId("puntoMedida");
-			this.oColModel = new JSONModel(sap.ui.require.toUrl("punto_medicion_individual/punto_medicion_individual/util") +
-				"/columnsModel.json");
+			this.oColModel = new JSONModel(sap.ui.require.toUrl(colModelRoot) + "/columnsModel.json");
 		},
 		onValueHelpRequested: function () {
 
-			var aCols = this.oColModel.getData().cols;
-			this._oValueHelpDialog = sap.ui.xmlfragment("punto_medicion_individual.punto_medicion_individual.fragments.MatchCode", this);
+			const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+			const fragmentPath = oResourceBundle.getText("fragmentPath");
+			const matchCode = oResourceBundle.getText("getMatchCode");
+
+			let aCols = this.oColModel.getData().cols;
+			this._oValueHelpDialog = sap.ui.xmlfragment(fragmentPath, this);
 			this.getView().addDependent(this._oValueHelpDialog);
 
 			this._oValueHelpDialog.getTableAsync().then(function (oTable) {
@@ -64,11 +74,11 @@ sap.ui.define([
 				oTable.setModel(this.oColModel, "columns");
 
 				if (oTable.bindRows) {
-					oTable.bindAggregation("rows", "/puntosMedidaSet");
+					oTable.bindAggregation("rows", matchCode);
 				}
 
 				if (oTable.bindItems) {
-					oTable.bindAggregation("items", "/puntosMedidaSet", function () {
+					oTable.bindAggregation("items", matchCode, function () {
 						return new ColumnListItem({
 							cells: aCols.map(function (column) {
 								return new Label({
@@ -78,24 +88,45 @@ sap.ui.define([
 						});
 					});
 				}
-
 				this._oValueHelpDialog.update();
 			}.bind(this));
 
-			var oToken = new Token();
+			let oToken = new Token();
 			oToken.setKey(this._oInput.getSelectedKey());
 			oToken.setText(this._oInput.getValue());
 			this._oValueHelpDialog.setTokens([oToken]);
 			this._oValueHelpDialog.open();
 		},
+		onValorMedidoLiveChange: function () {
+			let valorMedido = this.byId("valorMedido");
+			let isNotEmpty = valorMedido.getValue();
+			let btnCrearDoc = this.byId("btnCrearDocumento");
+
+			if (isNotEmpty) {
+				btnCrearDoc.setEnabled(true);
+				return;
+			}
+			btnCrearDoc.setEnabled(false);
+			return;
+		},
 		fillFormData: function () {
-			var puntoMedida = this.byId("puntoMedida").getValue().split("(")[0].trim();
-			obtenerPuntoMedicion(puntoMedida).then(function (res) {
-				console.log(res)
+			let that = this;
+			let puntoMedida = this.byId("puntoMedida").getValue().split("(")[0].trim();
+			let formDescripcion = this.byId("descripcion");
+			let formPosicionMedida = this.byId("posMedida");
+			let formUnidad = this.byId("unidad");
+			let formObjetoPuntoMedida = this.byId("objPuntoMedida");
+
+			obtenerPuntoMedicion(puntoMedida, that).then(function (res) {
+				let result = res.results[0];
+				formDescripcion.setValue(result.Descripcion);
+				formPosicionMedida.setValue(result.PosicionMedida);
+				formUnidad.setValue(result.Unidad);
+				formObjetoPuntoMedida.setValue(result.ObjetoPtoMedida);
 			});
 		},
 		onValueHelpOkPress: function (oEvent) {
-			var aTokens = oEvent.getParameter("tokens");
+			let aTokens = oEvent.getParameter("tokens");
 			this._oInput.setSelectedKey(aTokens[0].getKey());
 			this._oValueHelpDialog.close();
 		},
