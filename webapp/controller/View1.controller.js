@@ -40,11 +40,10 @@ sap.ui.define([
 			oDataModelIV.read(puntoMedicionSet, {
 				filters: [puntoMedida],
 				success: function (res) {
-					var oData = res;
-					resolve(oData);
+					resolve(res);
 				},
 				error: function () {
-					reject(MessageToast.show(errorMsg));
+					reject(errorMsg);
 				}
 			});
 		});
@@ -130,6 +129,8 @@ sap.ui.define([
 				formPosicionMedida.setValue(result.PosicionMedida);
 				formUnidad.setValue(result.Unidad);
 				formObjetoPuntoMedida.setValue(result.ObjetoPtoMedida);
+			}).catch(function (err) {
+				MessageToast.show(err);
 			});
 		},
 		onValueHelpOkPress: function (oEvent) {

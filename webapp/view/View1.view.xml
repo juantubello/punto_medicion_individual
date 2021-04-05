@@ -7,7 +7,7 @@
 				<Page id="page" title="{i18n>title}">
 					<content>
 						<VBox class="sapUiSmallMargin">
-							<f:SimpleForm id="SimpleFormToolbar" editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4" labelSpanM="4"
+							<f:SimpleForm title="DocumentoMedicion" id="SimpleFormToolbar" editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4" labelSpanM="4"
 								labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="1" columnsM="1"
 								singleContainerFullSize="false" ariaLabelledBy="Title1">
 								<f:toolbar>
