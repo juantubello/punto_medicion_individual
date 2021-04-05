@@ -4,11 +4,15 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Label",
 	"sap/m/Token",
-	"sap/m/MessageToast"
-], function (Controller, JSONModel, ColumnListItem, Label, Token, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/m/SearchField",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/type/String"
+], function (Controller, JSONModel, ColumnListItem, Label, Token, MessageToast, SearchField, Filter, FilterOperator, typeString) {
 	"use strict";
 
-	function obtenerPuntoMedicion(punto, context) {
+	async function obtenerPuntoMedicion(punto, context) {
 		return new Promise(function (resolve, reject) {
 
 			const oResourceBundle = context.getView().getModel("i18n").getResourceBundle();
@@ -16,7 +20,7 @@ sap.ui.define([
 			const puntoMedicionSet = oResourceBundle.getText("getPuntoMedida");
 			const errorMsg = oResourceBundle.getText("errorMsg");
 
-			let oDataModelIV = new sap.ui.model.odata.ODataModel(service, {
+			const oDataModelIV = new sap.ui.model.odata.ODataModel(service, {
 				json: true,
 				headers: {
 					"DataServiceVersion": "2.0",
@@ -48,7 +52,9 @@ sap.ui.define([
 			});
 		});
 	}
+
 	return Controller.extend("punto_medicion_individual.punto_medicion_individual.controller.View1", {
+
 		onInit: function () {
 
 			const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
@@ -58,15 +64,51 @@ sap.ui.define([
 			this._oInput = this.getView().byId("puntoMedida");
 			this.oColModel = new JSONModel(sap.ui.require.toUrl(colModelRoot) + "/columnsModel.json");
 		},
+
+		onFilterBarSearch: function (oEvent) {
+			let aSelectionSet = oEvent.getParameter("selectionSet");
+			let aFilters = aSelectionSet.reduce(function (aResult, oControl) {
+				if (oControl.getValue()) {
+					aResult.push(new Filter({
+						path: oControl.getName(),
+						operator: FilterOperator.EQ,
+						value1: oControl.getValue()
+					}));
+				}
+				return aResult;
+			}, []);
+			this._filterTable(new Filter({
+				filters: aFilters,
+				and: true
+			}));
+		},
+
 		onValueHelpRequested: function () {
 
 			const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
 			const fragmentPath = oResourceBundle.getText("fragmentPath");
 			const matchCode = oResourceBundle.getText("getMatchCode");
 
+			this._oBasicSearchField = new SearchField({
+				showSearchButton: false
+			});
+
 			let aCols = this.oColModel.getData().cols;
 			this._oValueHelpDialog = sap.ui.xmlfragment(fragmentPath, this);
 			this.getView().addDependent(this._oValueHelpDialog);
+
+			this._oValueHelpDialog.setRangeKeyFields([{
+				label: "Numero punto medicion",
+				key: "NumPtoMedicion",
+				type: "string",
+				typeInstance: new typeString({}, {
+					maxLength: 12
+				})
+			}]);
+
+			var oFilterBar = this._oValueHelpDialog.getFilterBar();
+			oFilterBar.setFilterBarExpanded(false);
+			oFilterBar.setBasicSearch(this._oBasicSearchField);
 
 			this._oValueHelpDialog.getTableAsync().then(function (oTable) {
 				oTable.setModel(this.oProductsModel);
@@ -96,18 +138,15 @@ sap.ui.define([
 			this._oValueHelpDialog.setTokens([oToken]);
 			this._oValueHelpDialog.open();
 		},
+
 		onValorMedidoLiveChange: function () {
 			let valorMedido = this.byId("valorMedido");
 			let isNotEmpty = valorMedido.getValue();
 			let btnCrearDoc = this.byId("btnCrearDocumento");
-
-			if (isNotEmpty) {
-				btnCrearDoc.setEnabled(true);
-				return;
-			}
-			btnCrearDoc.setEnabled(false);
-			return;
+			let state = isNotEmpty ? true : false;
+			btnCrearDoc.setEnabled(state);
 		},
+
 		onCrearDocumentoMedicion: function () {
 			let puntoMedida = this.byId("puntoMedida").getValue().split("(")[0].trim();
 			if (!puntoMedida) {
@@ -115,7 +154,9 @@ sap.ui.define([
 				return;
 			}
 		},
-		fillFormData: function () {
+
+		fillFormData: async function () {
+
 			let that = this;
 			let puntoMedida = this.byId("puntoMedida").getValue().split("(")[0].trim();
 			let formDescripcion = this.byId("descripcion");
@@ -123,27 +164,51 @@ sap.ui.define([
 			let formUnidad = this.byId("unidad");
 			let formObjetoPuntoMedida = this.byId("objPuntoMedida");
 
-			obtenerPuntoMedicion(puntoMedida, that).then(function (res) {
-				let result = res.results[0];
+			try {
+				const oData = await obtenerPuntoMedicion(puntoMedida, that);
+				let result = oData.results[0];
 				formDescripcion.setValue(result.Descripcion);
 				formPosicionMedida.setValue(result.PosicionMedida);
 				formUnidad.setValue(result.Unidad);
 				formObjetoPuntoMedida.setValue(result.ObjetoPtoMedida);
-			}).catch(function (err) {
+			} catch (err) {
 				MessageToast.show(err);
-			});
+			}
 		},
+
 		onValueHelpOkPress: function (oEvent) {
 			let aTokens = oEvent.getParameter("tokens");
 			this._oInput.setSelectedKey(aTokens[0].getKey());
 			this._oValueHelpDialog.close();
 		},
+
 		onValueHelpCancelPress: function () {
 			this._oValueHelpDialog.close();
 		},
+
 		onValueHelpAfterClose: function () {
 			this._oValueHelpDialog.destroy();
-			this.fillFormData();
+			let puntoMedida = this.byId("puntoMedida").getValue().split("(")[0].trim();
+			if (puntoMedida) {
+				this.fillFormData();
+			}
+		},
+
+		_filterTable: function (oFilter) {
+			var oValueHelpDialog = this._oValueHelpDialog;
+
+			oValueHelpDialog.getTableAsync().then(function (oTable) {
+				if (oTable.bindRows) {
+					oTable.getBinding("rows").filter(oFilter);
+				}
+
+				if (oTable.bindItems) {
+					oTable.getBinding("items").filter(oFilter);
+				}
+
+				oValueHelpDialog.update();
+			});
 		}
+		
 	});
 });

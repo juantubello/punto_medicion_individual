@@ -1,14 +1,14 @@
 {
 	"cols": [{
-		"label": "Denominacion",
-		"template": "Denominacion",
+		"label": "Numero punto medicion",
+		"template": "NumPtoMedicion",
 		"width": "5rem"
 	}, {
 		"label": "Descripcion",
 		"template": "Descripcion"
 	}, {
-		"label": "Numero punto medicion",
-		"template": "NumPtoMedicion"
+		"label": "Denominacion",
+		"template": "Denominacion"
 	}, {
 		"label": "Numero de objeto",
 		"template": "NumObjeto"
