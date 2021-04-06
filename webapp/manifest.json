@@ -21,6 +21,10 @@
 					"localUri": "localService/metadata.xml",
 					"annotations": []
 				}
+			},
+			"routesJson": {
+				"uri": "./util/routes.json",
+				"type": "JSON"
 			}
 		}
 	},
@@ -77,17 +81,19 @@
 				"dataSource": "ZPM_AMCR_PUNTO_MEDICION_INDIV_SRV",
 				"preload": true
 			},
+			"routesJson": {
+				"type": "sap.ui.model.json.JSONModel",
+				"dataSource": "routesJson"
+			},
 			"@i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"uri": "i18n/i18n.properties"
 			}
 		},
 		"resources": {
-			"css": [
-				{
-					"uri": "css/style.css"
-				}
-			]
+			"css": [{
+				"uri": "css/style.css"
+			}]
 		},
 		"routing": {
 			"config": {
@@ -99,15 +105,13 @@
 				"controlId": "app",
 				"clearControlAggregation": false
 			},
-			"routes": [
-				{
-					"name": "RouteView1",
-					"pattern": "RouteView1",
-					"target": [
-						"TargetView1"
-					]
-				}
-			],
+			"routes": [{
+				"name": "RouteView1",
+				"pattern": "RouteView1",
+				"target": [
+					"TargetView1"
+				]
+			}],
 			"targets": {
 				"TargetView1": {
 					"viewType": "XML",

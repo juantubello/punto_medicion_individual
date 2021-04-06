@@ -1,10 +1,10 @@
 <core:FragmentDefinition xmlns="sap.ui.comp.valuehelpdialog" xmlns:core="sap.ui.core" xmlns:fb="sap.ui.comp.filterbar" xmlns:m="sap.m">
-	<ValueHelpDialog title="Puntos de medida" ok=".onValueHelpOkPress" cancel=".onValueHelpCancelPress" afterClose=".onValueHelpAfterClose"
+	<ValueHelpDialog title="{i18n>fragmentMatchCodeTitle}" ok=".onValueHelpOkPress" cancel=".onValueHelpCancelPress" afterClose=".onValueHelpAfterClose"
 		supportMultiselect="false" key="NumPtoMedicion" descriptionKey="NumPtoMedicion">
 		<filterBar>
 			<fb:FilterBar useToolbar="false" search=".onFilterBarSearch" filterContainerWidth="6rem">
 				<fb:filterGroupItems>
-					<fb:FilterGroupItem groupName="__$INTERNAL$" name="NumPtoMedicion" label="Numero punto medicion" visibleInFilterBar="true">
+					<fb:FilterGroupItem groupName="__$INTERNAL$" name="NumPtoMedicion" label="{i18n>fragmentFieldFilter}" visibleInFilterBar="true">
 						<fb:control>
 							<m:Input name="NumPtoMedicion"/>
 						</fb:control>

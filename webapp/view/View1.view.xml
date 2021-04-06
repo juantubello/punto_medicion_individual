@@ -7,64 +7,58 @@
 				<Page id="page" title="{i18n>title}">
 					<content>
 						<VBox class="sapUiSmallMargin">
-							<f:SimpleForm title="DocumentoMedicion" id="SimpleFormToolbar" editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4" labelSpanM="4"
+							<f:SimpleForm title="{i18n>mainTitle}" id="SimpleFormToolbar" editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4" labelSpanM="4"
 								labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="1" columnsM="1"
 								singleContainerFullSize="false" ariaLabelledBy="Title1">
 								<f:toolbar>
 									<Toolbar id="TB1">
-										<Title id="Title1" text="Documento de medicion"/>
+										<Title id="Title1" text="{i18n>mainTitle}"/>
 									</Toolbar>
 								</f:toolbar>
 								<f:content>
 									<Toolbar ariaLabelledBy="Title2">
-										<Title id="Title2" text="Punto de medicion"/>
+										<Title id="Title2" text="{i18n>subtitle1}"/>
 									</Toolbar>
-									<Label text="Punto de medida"/>
+									<Label text="{i18n>puntoMedida}"/>
 									<Input id="puntoMedida" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequested" 
 										suggestionItems="{ path: '/puntosMedidaSet', sorter: { path: 'NumPtoMedicion' } }">
 										<core:Item key="{NumPtoMedicion}" text="{NumPtoMedicion} ({NumObjeto})"/>
 									</Input>
 									<Toolbar ariaLabelledBy="Title3">
-										<Title id="Title3" text="Valores de propuesta"/>
+										<Title id="Title3" text="{i18n>subtitle2}"/>
 									</Toolbar>
-									<Label text="Descripcion"></Label>
+									<Label text="{i18n>descripcion}"></Label>
 									<Input value="" id="descripcion" editable="false">
 										<layoutData>
 											<l:GridData span="L4 M6 S12"/>
 										</layoutData>
 									</Input>
-									<Label text="Posicion de medida"/>
+									<Label text="{i18n>posMedida}"/>
 									<Input value="" id="posMedida" editable="false">
 										<layoutData>
 											<l:GridData span="L4 M6 S12"/>
 										</layoutData>
 									</Input>
-									<Label text="Unidad"/>
+									<Label text="{i18n>unidad}"/>
 									<Input value="" id="unidad" editable="false">
 										<layoutData>
 											<l:GridData span="L4 M6 S12"/>
 										</layoutData>
 									</Input>
-									<Label text="Objeto del punto de medida"/>
+									<Label text="{i18n>objPuntoMedida}"/>
 									<Input value="" id="objPuntoMedida" editable="false">
 										<layoutData>
 											<l:GridData span="L4 M6 S12"/>
 										</layoutData>
 									</Input>
-									<Label text="Valor medido" required="true"/>
+									<Label text="{i18n>valorMedido}" required="true"/>
 									<Input id="valorMedido" value="" valueLiveUpdate="true" liveChange="onValorMedidoLiveChange">
 										<layoutData>
 											<l:GridData span="L4 M6 S12"/>
 										</layoutData>
 									</Input>
-									<!--<Label text="Diferencia"/>-->
-									<!--<Input id="diferencia" value="" editable="false">-->
-									<!--	<layoutData>-->
-									<!--		<l:GridData span="L4 M6 S12"/>-->
-									<!--	</layoutData>-->
-									<!--</Input>-->
 									<Label text=""/>
-									<Button id="btnCrearDocumento" class="btnEnd" type="Accept" text="Crear documento medicion" icon="sap-icon://create" press="onCrearDocumentoMedicion"
+									<Button id="btnCrearDocumento" class="btnEnd" type="Accept" text="{i18n>btnCrearDocumento}" icon="sap-icon://create" press="onCrearDocumentoMedicion"
 										ariaDescribedBy="accept" width="62%" enabled="false">
 										<layoutData>
 											<FlexItemData growFactor="1"/>

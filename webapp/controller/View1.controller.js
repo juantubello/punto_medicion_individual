@@ -10,17 +10,17 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/type/String"
 ], function (Controller, JSONModel, ColumnListItem, Label, Token, MessageToast, SearchField, Filter, FilterOperator, typeString) {
+
 	"use strict";
 
 	async function obtenerPuntoMedicion(punto, context) {
 		return new Promise(function (resolve, reject) {
 
+			const routes = context.getOwnerComponent().getModel("routesJson").getData().routes;
 			const oResourceBundle = context.getView().getModel("i18n").getResourceBundle();
-			const service = oResourceBundle.getText("service");
-			const puntoMedicionSet = oResourceBundle.getText("getPuntoMedida");
-			const errorMsg = oResourceBundle.getText("errorMsg");
+			const errorMsg = oResourceBundle.getText("serviceErrorMsg");
 
-			const oDataModelIV = new sap.ui.model.odata.ODataModel(service, {
+			const oDataModelIV = new sap.ui.model.odata.ODataModel(routes.service, {
 				json: true,
 				headers: {
 					"DataServiceVersion": "2.0",
@@ -41,7 +41,7 @@ sap.ui.define([
 				value1: punto
 			});
 
-			oDataModelIV.read(puntoMedicionSet, {
+			oDataModelIV.read(routes.puntoMedidaInd, {
 				filters: [puntoMedida],
 				success: function (res) {
 					resolve(res);
@@ -56,13 +56,10 @@ sap.ui.define([
 	return Controller.extend("punto_medicion_individual.punto_medicion_individual.controller.View1", {
 
 		onInit: function () {
-
-			const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
-			const colModelRoot = oResourceBundle.getText("modelColumnRoot");
-
+			const routes = this.getOwnerComponent().getModel("routesJson").getData().routes;
 			this.byId("btnCrearDocumento").setEnabled(false);
 			this._oInput = this.getView().byId("puntoMedida");
-			this.oColModel = new JSONModel(sap.ui.require.toUrl(colModelRoot) + "/columnsModel.json");
+			this.oColModel = new JSONModel(sap.ui.require.toUrl(routes.modelColumnRoot) + "/columnsModel.json");
 		},
 
 		onFilterBarSearch: function (oEvent) {
@@ -85,16 +82,13 @@ sap.ui.define([
 
 		onValueHelpRequested: function () {
 
-			const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
-			const fragmentPath = oResourceBundle.getText("fragmentPath");
-			const matchCode = oResourceBundle.getText("getMatchCode");
-
+			const routes = this.getOwnerComponent().getModel("routesJson").getData().routes;
 			this._oBasicSearchField = new SearchField({
 				showSearchButton: false
 			});
 
 			let aCols = this.oColModel.getData().cols;
-			this._oValueHelpDialog = sap.ui.xmlfragment(fragmentPath, this);
+			this._oValueHelpDialog = sap.ui.xmlfragment(routes.fragmentPath, this);
 			this.getView().addDependent(this._oValueHelpDialog);
 
 			this._oValueHelpDialog.setRangeKeyFields([{
@@ -115,11 +109,11 @@ sap.ui.define([
 				oTable.setModel(this.oColModel, "columns");
 
 				if (oTable.bindRows) {
-					oTable.bindAggregation("rows", matchCode);
+					oTable.bindAggregation("rows", routes.puntosMedidaF4);
 				}
 
 				if (oTable.bindItems) {
-					oTable.bindAggregation("items", matchCode, function () {
+					oTable.bindAggregation("items", routes.puntosMedidaF4, function () {
 						return new ColumnListItem({
 							cells: aCols.map(function (column) {
 								return new Label({
@@ -148,9 +142,12 @@ sap.ui.define([
 		},
 
 		onCrearDocumentoMedicion: function () {
+			const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+			const emptyErrorMsg = oResourceBundle.getText("msgCampoPuntoMedidaEmpty");
+
 			let puntoMedida = this.byId("puntoMedida").getValue().split("(")[0].trim();
 			if (!puntoMedida) {
-				MessageToast.show("Campo Punto de Medida no puede estar vacio");
+				MessageToast.show(emptyErrorMsg);
 				return;
 			}
 		},
@@ -209,6 +206,6 @@ sap.ui.define([
 				oValueHelpDialog.update();
 			});
 		}
-		
+
 	});
 });
