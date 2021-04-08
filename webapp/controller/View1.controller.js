@@ -8,8 +8,17 @@ sap.ui.define([
 	"sap/m/SearchField",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/model/type/String"
-], function (Controller, JSONModel, ColumnListItem, Label, Token, MessageToast, SearchField, Filter, FilterOperator, typeString) {
+	"sap/ui/model/type/String",
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/layout/VerticalLayout",
+	"sap/m/Dialog",
+	"sap/m/DialogType",
+	"sap/m/Button",
+	"sap/m/ButtonType",
+	"sap/m/Text",
+	"sap/ui/core/ValueState"
+], function (Controller, JSONModel, ColumnListItem, Label, Token, MessageToast, SearchField, Filter, FilterOperator, typeString,
+	HorizonalLayout, VerticalLayout, Dialog, DialogType, Button, ButtonType, Text, ValueState) {
 
 	"use strict";
 
@@ -50,6 +59,242 @@ sap.ui.define([
 					reject(errorMsg);
 				}
 			});
+		});
+	}
+
+	async function verificarLimites(punto, valorMedido, documento, context) {
+		return new Promise(function (resolve, reject) {
+
+			const routes = context.getOwnerComponent().getModel("routesJson").getData().routes;
+			const oResourceBundle = context.getView().getModel("i18n").getResourceBundle();
+			const errorMsg = oResourceBundle.getText("serviceErrorMsg");
+
+			let response = {
+				"crearAviso": false,
+				"mensaje": ""
+			};
+
+			const oDataModelIV = new sap.ui.model.odata.ODataModel(routes.service, {
+				json: true,
+				headers: {
+					"DataServiceVersion": "2.0",
+					"Cache-Control": "no-cache, no-store",
+					"Pragma": "no-cache"
+				},
+				metadataUrlParams: {
+					"sap-lenguaje": "ES"
+				},
+				serviceUrlParams: {
+					"sap-lenguaje": "ES"
+				}
+			});
+
+			oDataModelIV.read(routes.verificarLimites + "(PuntoMedida='" + punto + "',ValorMedido='" + valorMedido + "',Documento='" + documento +
+				"')", {
+					success: function (res) {
+						if (res.CrearAviso) {
+							response.crearAviso = true;
+							resolve(response);
+						} else {
+							response.crearAviso = false;
+							response.mensaje = "No crear aviso";
+							resolve(response);
+						}
+					},
+					error: function () {
+						response.crearAviso = false;
+						response.mensaje = "Error verificando limites";
+						reject(response);
+					}
+				});
+
+		});
+	}
+
+	async function successMesagge(mensaje, context) {
+		return new Promise(function (resolve, reject) {
+			try {
+				context.oMessageMedicion = new Dialog({
+					type: DialogType.Message,
+					title: "Success",
+					state: ValueState.Success,
+					content: new Text({
+						text: mensaje
+					}),
+					beginButton: new Button({
+						type: ButtonType.Emphasized,
+						text: "OK",
+						press: function () {
+							resolve("OK");
+							context.oMessageMedicion.close();
+						}
+					})
+				});
+				context.oMessageMedicion.open();
+			} catch (err) {
+				reject(err);
+			}
+		});
+	}
+
+	function errorMesagge(mensaje, context) {
+		return new Promise(function (resolve, reject) {
+			try {
+				context.oMessageMedicion = new Dialog({
+					type: DialogType.Message,
+					title: "Error",
+					state: ValueState.Error,
+					content: new Text({
+						text: mensaje
+					}),
+					beginButton: new Button({
+						type: ButtonType.Emphasized,
+						text: "OK",
+						press: function () {
+							resolve("OK");
+							context.oMessageMedicion.close();
+						}
+					})
+				});
+				context.oMessageMedicion.open();
+			} catch (err) {
+				reject(err);
+			}
+		});
+	}
+
+	async function avisoPopUp(context) {
+		return new Promise(function (resolve, reject) {
+			let resUser;
+			try {
+				context.oApproveDialog = new Dialog({
+					type: DialogType.Message,
+					title: "Creacion de aviso",
+					content: new Text({
+						text: "Valor de medida fuera de los límites esperados ¿desea generar un aviso?"
+					}),
+					beginButton: new Button({
+						type: ButtonType.Emphasized,
+						text: "Crear Aviso",
+						press: function () {
+							resUser = true;
+							context.oApproveDialog.close();
+							resolve(resUser);
+						}
+					}),
+					endButton: new Button({
+						text: "No crear aviso",
+						press: function () {
+							resUser = false;
+							context.oApproveDialog.close();
+							resolve(resUser);
+						}
+					})
+				});
+				context.oApproveDialog.open();
+			} catch (err) {
+				reject(err);
+			}
+		});
+	}
+
+	async function crearDocumentoMedida(punto, valorMedido, context) {
+
+		return new Promise(function (resolve, reject) {
+
+			const routes = context.getOwnerComponent().getModel("routesJson").getData().routes;
+			const oResourceBundle = context.getView().getModel("i18n").getResourceBundle();
+			const errorMsg = oResourceBundle.getText("serviceErrorMsg");
+
+			let response = {
+				"documento": "",
+				"mensaje": ""
+			};
+
+			const oDataModelIV = new sap.ui.model.odata.ODataModel(routes.service, {
+				json: true,
+				headers: {
+					"DataServiceVersion": "2.0",
+					"Cache-Control": "no-cache, no-store",
+					"Pragma": "no-cache"
+				},
+				metadataUrlParams: {
+					"sap-lenguaje": "ES"
+				},
+				serviceUrlParams: {
+					"sap-lenguaje": "ES"
+				}
+			});
+
+			oDataModelIV.read(routes.crearDocMedicion + "(PuntoMedida='" + punto + "',ValorMedido='" + valorMedido + "')", {
+				success: function (res) {
+					console.log(res.Documento);
+					if (res.Documento) {
+						response.documento = res.Documento;
+						response.mensaje = "Documento de medida " + res.Documento + " creado correctamente";
+						resolve(response);
+					} else {
+						response.mensaje = "Error al crear el documento de medida";
+						reject(response);
+					}
+				},
+				error: function (err) {
+					console.log(err);
+					response.mensaje = "Error al crear el documento de medida";
+					reject(response);
+				}
+			});
+
+		});
+
+	}
+	async function crearDocumentoAviso(context) {
+		return new Promise(function (resolve, reject) {
+
+			// const routes = context.getOwnerComponent().getModel("routesJson").getData().routes;
+			// const oResourceBundle = context.getView().getModel("i18n").getResourceBundle();
+			// const errorMsg = oResourceBundle.getText("serviceErrorMsg");
+
+			let response = {
+				"documento": "",
+				"mensaje": ""
+			};
+
+			// const oDataModelIV = new sap.ui.model.odata.ODataModel(routes.service, {
+			// 	json: true,
+			// 	headers: {
+			// 		"DataServiceVersion": "2.0",
+			// 		"Cache-Control": "no-cache, no-store",
+			// 		"Pragma": "no-cache"
+			// 	},
+			// 	metadataUrlParams: {
+			// 		"sap-lenguaje": "ES"
+			// 	},
+			// 	serviceUrlParams: {
+			// 		"sap-lenguaje": "ES"
+			// 	}
+			// });
+			response.mensaje = "mensaje test de error";
+			reject(response);
+			// oDataModelIV.read(routes.crearDocMedicion + "(PuntoMedida='" + punto + "',ValorMedido='" + valorMedido + "')", {
+			// 	success: function (res) {
+			// 		console.log(res.Documento);
+			// 		if (res.Documento) {
+			// 			response.documento = res.Documento;
+			// 			response.mensaje = "Documento de medida " + res.Documento + " creado correctamente";
+			// 			resolve(response);
+			// 		} else {
+			// 			response.mensaje = "Error al crear el documento de medida";
+			// 			reject(response);
+			// 		}
+			// 	},
+			// 	error: function (err) {
+			// 		console.log(err);
+			// 		response.mensaje = "Error al crear el documento de medida";
+			// 		reject(response);
+			// 	}
+			// });
+
 		});
 	}
 
@@ -141,15 +386,39 @@ sap.ui.define([
 			btnCrearDoc.setEnabled(state);
 		},
 
-		onCrearDocumentoMedicion: function () {
+		onCrearDocumentoMedicion: async function () {
+			let that = this;
+			let crearAviso;
 			const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
 			const emptyErrorMsg = oResourceBundle.getText("msgCampoPuntoMedidaEmpty");
-
+			let valorMedido = this.byId("valorMedido").getValue();
 			let puntoMedida = this.byId("puntoMedida").getValue().split("(")[0].trim();
+
 			if (!puntoMedida) {
 				MessageToast.show(emptyErrorMsg);
 				return;
 			}
+
+			try {
+				const documentoMedida = await crearDocumentoMedida(puntoMedida, valorMedido, that);
+				const limitesResponse = await verificarLimites(puntoMedida, valorMedido, documentoMedida.documento, that);
+				const notificarAviso = limitesResponse.crearAviso ? true : false;
+
+				if (notificarAviso) {
+					crearAviso = await avisoPopUp(that);
+				}
+				
+				await successMesagge(documentoMedida.mensaje, that);
+				
+				if (crearAviso) {
+					const documentoAviso = await crearDocumentoAviso(that);
+				}
+			} catch (err) {
+				await errorMesagge(err.mensaje, that);
+			}
+
+			this.clearFormFileds();
+
 		},
 
 		fillFormData: async function () {
@@ -189,6 +458,16 @@ sap.ui.define([
 			if (puntoMedida) {
 				this.fillFormData();
 			}
+		},
+
+		clearFormFileds: function () {
+			this.byId("puntoMedida").setValue("");
+			this.byId("descripcion").setValue("");
+			this.byId("posMedida").setValue("");
+			this.byId("unidad").setValue("");
+			this.byId("objPuntoMedida").setValue("");
+			this.byId("valorMedido").setValue("");
+			this.byId("btnCrearDocumento").setEnabled(false);
 		},
 
 		_filterTable: function (oFilter) {
