@@ -52,7 +52,7 @@
 										</layoutData>
 									</Input>
 									<Label text="{i18n>valorMedido}" required="true"/>
-									<Input id="valorMedido" value="" valueLiveUpdate="true" liveChange="onValorMedidoLiveChange">
+									<Input id="valorMedido" value="" placeholder="formato ###,###.##" valueLiveUpdate="true" liveChange="onValorMedidoLiveChange">
 										<layoutData>
 											<l:GridData span="L4 M6 S12"/>
 										</layoutData>

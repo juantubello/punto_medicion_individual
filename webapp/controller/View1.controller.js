@@ -387,6 +387,7 @@ sap.ui.define([
 			const oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
 			const emptyErrorMsg = oResourceBundle.getText("msgCampoPuntoMedidaEmpty");
 			let valorMedido = this.byId("valorMedido").getValue();
+			valorMedido = Number(valorMedido.replace(/[^0-9.-]+/g, ""));
 			let puntoMedida = this.byId("puntoMedida").getValue().split("(")[0].trim();
 			let equipo = this.byId("equipo").getValue();
 
