@@ -4,6 +4,7 @@
 			"puntoMedidaInd": "/obtenerPuntoMedidaSet",
 			"puntosMedidaF4": "/puntosMedidaSet",
 			"crearDocMedicion": "/crearDocMedicionSet",
+			"crearAviso": "/crearAvisoSet",
 			"verificarLimites": "/verificarLimitesSet",
 			"fragmentPath": "punto_medicion_individual.punto_medicion_individual.fragments.MatchCode",
 			"modelColumnRoot": "punto_medicion_individual/punto_medicion_individual/util"

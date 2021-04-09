@@ -116,7 +116,7 @@ sap.ui.define([
 			try {
 				context.oMessageMedicion = new Dialog({
 					type: DialogType.Message,
-					title: "Success",
+					title: "Éxito",
 					state: ValueState.Success,
 					content: new Text({
 						text: mensaje
@@ -228,7 +228,6 @@ sap.ui.define([
 
 			oDataModelIV.read(routes.crearDocMedicion + "(PuntoMedida='" + punto + "',ValorMedido='" + valorMedido + "')", {
 				success: function (res) {
-					console.log(res.Documento);
 					if (res.Documento) {
 						response.documento = res.Documento;
 						response.mensaje = "Documento de medida " + res.Documento + " creado correctamente";
@@ -248,52 +247,48 @@ sap.ui.define([
 		});
 
 	}
-	async function crearDocumentoAviso(context) {
+	async function crearDocumentoAviso(punto, valorMedido, equipo, context) {
 		return new Promise(function (resolve, reject) {
 
-			// const routes = context.getOwnerComponent().getModel("routesJson").getData().routes;
-			// const oResourceBundle = context.getView().getModel("i18n").getResourceBundle();
-			// const errorMsg = oResourceBundle.getText("serviceErrorMsg");
+			const routes = context.getOwnerComponent().getModel("routesJson").getData().routes;
 
 			let response = {
 				"documento": "",
 				"mensaje": ""
 			};
 
-			// const oDataModelIV = new sap.ui.model.odata.ODataModel(routes.service, {
-			// 	json: true,
-			// 	headers: {
-			// 		"DataServiceVersion": "2.0",
-			// 		"Cache-Control": "no-cache, no-store",
-			// 		"Pragma": "no-cache"
-			// 	},
-			// 	metadataUrlParams: {
-			// 		"sap-lenguaje": "ES"
-			// 	},
-			// 	serviceUrlParams: {
-			// 		"sap-lenguaje": "ES"
-			// 	}
-			// });
-			response.mensaje = "mensaje test de error";
-			reject(response);
-			// oDataModelIV.read(routes.crearDocMedicion + "(PuntoMedida='" + punto + "',ValorMedido='" + valorMedido + "')", {
-			// 	success: function (res) {
-			// 		console.log(res.Documento);
-			// 		if (res.Documento) {
-			// 			response.documento = res.Documento;
-			// 			response.mensaje = "Documento de medida " + res.Documento + " creado correctamente";
-			// 			resolve(response);
-			// 		} else {
-			// 			response.mensaje = "Error al crear el documento de medida";
-			// 			reject(response);
-			// 		}
-			// 	},
-			// 	error: function (err) {
-			// 		console.log(err);
-			// 		response.mensaje = "Error al crear el documento de medida";
-			// 		reject(response);
-			// 	}
-			// });
+			const oDataModelIV = new sap.ui.model.odata.ODataModel(routes.service, {
+				json: true,
+				headers: {
+					"DataServiceVersion": "2.0",
+					"Cache-Control": "no-cache, no-store",
+					"Pragma": "no-cache"
+				},
+				metadataUrlParams: {
+					"sap-lenguaje": "ES"
+				},
+				serviceUrlParams: {
+					"sap-lenguaje": "ES"
+				}
+			});
+
+			oDataModelIV.read(routes.crearAviso + "(Equipo='" + equipo + "',PuntoMedida='" + punto + "',ValorMedido='" + valorMedido + "')", {
+				success: function (res) {
+					if (res.Aviso) {
+						response.documento = res.Aviso;
+						response.mensaje = "Aviso " + res.Aviso + " creado correctamente";
+						resolve(response);
+					} else {
+						response.mensaje = "Error al crear aviso";
+						reject(response);
+					}
+				},
+				error: function (err) {
+					console.log(err);
+					response.mensaje = "Error al crear aviso";
+					reject(response);
+				}
+			});
 
 		});
 	}
@@ -393,6 +388,7 @@ sap.ui.define([
 			const emptyErrorMsg = oResourceBundle.getText("msgCampoPuntoMedidaEmpty");
 			let valorMedido = this.byId("valorMedido").getValue();
 			let puntoMedida = this.byId("puntoMedida").getValue().split("(")[0].trim();
+			let equipo = this.byId("equipo").getValue();
 
 			if (!puntoMedida) {
 				MessageToast.show(emptyErrorMsg);
@@ -407,18 +403,17 @@ sap.ui.define([
 				if (notificarAviso) {
 					crearAviso = await avisoPopUp(that);
 				}
-				
+
 				await successMesagge(documentoMedida.mensaje, that);
-				
+
 				if (crearAviso) {
-					const documentoAviso = await crearDocumentoAviso(that);
+					const documentoAviso = await crearDocumentoAviso(puntoMedida, valorMedido, equipo, that);
+					await successMesagge(documentoAviso.mensaje, that);
 				}
 			} catch (err) {
 				await errorMesagge(err.mensaje, that);
 			}
-
 			this.clearFormFileds();
-
 		},
 
 		fillFormData: async function () {
@@ -429,7 +424,7 @@ sap.ui.define([
 			let formPosicionMedida = this.byId("posMedida");
 			let formUnidad = this.byId("unidad");
 			let formObjetoPuntoMedida = this.byId("objPuntoMedida");
-
+			let formEquipo = this.byId("equipo");
 			try {
 				const oData = await obtenerPuntoMedicion(puntoMedida, that);
 				let result = oData.results[0];
@@ -437,6 +432,7 @@ sap.ui.define([
 				formPosicionMedida.setValue(result.PosicionMedida);
 				formUnidad.setValue(result.Unidad);
 				formObjetoPuntoMedida.setValue(result.ObjetoPtoMedida);
+				formEquipo.setValue(result.Equipo);
 			} catch (err) {
 				MessageToast.show(err);
 			}
@@ -467,6 +463,7 @@ sap.ui.define([
 			this.byId("unidad").setValue("");
 			this.byId("objPuntoMedida").setValue("");
 			this.byId("valorMedido").setValue("");
+			this.byId("equipo").setValue("");
 			this.byId("btnCrearDocumento").setEnabled(false);
 		},
 

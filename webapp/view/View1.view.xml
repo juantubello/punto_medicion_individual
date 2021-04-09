@@ -7,9 +7,9 @@
 				<Page id="page" title="{i18n>title}">
 					<content>
 						<VBox class="sapUiSmallMargin">
-							<f:SimpleForm title="{i18n>mainTitle}" id="SimpleFormToolbar" editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4" labelSpanM="4"
-								labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="1" columnsM="1"
-								singleContainerFullSize="false" ariaLabelledBy="Title1">
+							<f:SimpleForm title="{i18n>mainTitle}" id="SimpleFormToolbar" editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4"
+								labelSpanM="4" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4" emptySpanM="0" emptySpanS="0" columnsXL="2"
+								columnsL="1" columnsM="1" singleContainerFullSize="false" ariaLabelledBy="Title1">
 								<f:toolbar>
 									<Toolbar id="TB1">
 										<Title id="Title1" text="{i18n>mainTitle}"/>
@@ -20,7 +20,7 @@
 										<Title id="Title2" text="{i18n>subtitle1}"/>
 									</Toolbar>
 									<Label text="{i18n>puntoMedida}"/>
-									<Input id="puntoMedida" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequested" 
+									<Input id="puntoMedida" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequested"
 										suggestionItems="{ path: '/puntosMedidaSet', sorter: { path: 'NumPtoMedicion' } }">
 										<core:Item key="{NumPtoMedicion}" text="{NumPtoMedicion} ({NumObjeto})"/>
 									</Input>
@@ -57,9 +57,14 @@
 											<l:GridData span="L4 M6 S12"/>
 										</layoutData>
 									</Input>
+									<Input id="equipo" value="" enabled="false" visible="false">
+										<layoutData>
+											<l:GridData span="L4 M6 S12"/>
+										</layoutData>
+									</Input>
 									<Label text=""/>
-									<Button id="btnCrearDocumento" class="btnEnd" type="Accept" text="{i18n>btnCrearDocumento}" icon="sap-icon://create" press="onCrearDocumentoMedicion"
-										ariaDescribedBy="accept" width="62%" enabled="false">
+									<Button id="btnCrearDocumento" class="btnEnd" type="Accept" text="{i18n>btnCrearDocumento}" icon="sap-icon://create"
+										press="onCrearDocumentoMedicion" ariaDescribedBy="accept" width="62%" enabled="false">
 										<layoutData>
 											<FlexItemData growFactor="1"/>
 											<l:GridData span="L4 M6 S12"/>
