@@ -302,6 +302,36 @@ sap.ui.define([
 			this.oColModel = new JSONModel(sap.ui.require.toUrl(routes.modelColumnRoot) + "/columnsModel.json");
 		},
 
+		onSearchBtn: function () {
+			let puntoMedida = this.byId("puntoMedida").getValue().split("(")[0].trim();
+			
+			if (puntoMedida) {
+				this.fillFormData();
+				return;
+			}
+			if (!puntoMedida){
+				this.clearFormFileds();
+				return;
+			}
+			
+		},
+
+		handleBarCode: function (evt) {
+			var inputBC = this.getView().byId("puntoMedida");
+			var that = this;
+			jQuery.sap.require("sap.ndc.BarcodeScanner");
+			sap.ndc.BarcodeScanner.scan(
+				function (oResult) {
+					inputBC.setValue(oResult.text);
+					that.onSearchBtn();
+				},
+				function (oError) {},
+				function (oResult) {
+					inputBC.setValue(oResult.text);
+				}
+			);
+		},
+
 		onFilterBarSearch: function (oEvent) {
 			let aSelectionSet = oEvent.getParameter("selectionSet");
 			let aFilters = aSelectionSet.reduce(function (aResult, oControl) {
@@ -435,7 +465,8 @@ sap.ui.define([
 				formObjetoPuntoMedida.setValue(result.ObjetoPtoMedida);
 				formEquipo.setValue(result.Equipo);
 			} catch (err) {
-				MessageToast.show(err);
+				this.clearFormFileds();
+				MessageToast.show("No se encontro el punto de medicion");
 			}
 		},
 

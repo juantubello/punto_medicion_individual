@@ -20,10 +20,14 @@
 										<Title id="Title2" text="{i18n>subtitle1}"/>
 									</Toolbar>
 									<Label text="{i18n>puntoMedida}"/>
-									<Input id="puntoMedida" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequested"
+									<HBox>
+									<Input id="puntoMedida" showValueHelp="true" valueHelpRequest=".onValueHelpRequested"
 										suggestionItems="{ path: '/puntosMedidaSet', sorter: { path: 'NumPtoMedicion' } }">
 										<core:Item key="{NumPtoMedicion}" text="{NumPtoMedicion} ({NumObjeto})"/>
 									</Input>
+									<Button id="BC" text="" icon="sap-icon://bar-code" tooltip="Escanear Codigo" press="handleBarCode" type="Default" width="15%"/>
+									<Button id="btnSearch" visible="true" press="onSearchBtn" tooltip="Buscar" icon="sap-icon://search" width="15%"/>
+									</HBox>
 									<Toolbar ariaLabelledBy="Title3">
 										<Title id="Title3" text="{i18n>subtitle2}"/>
 									</Toolbar>
