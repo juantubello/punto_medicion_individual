@@ -285,7 +285,7 @@ sap.ui.define([
 				},
 				error: function (err) {
 					console.log(err);
-					response.mensaje = "Error al crear aviso";
+					response.mensaje = "Error al crear aviso ";
 					reject(response);
 				}
 			});
@@ -295,11 +295,21 @@ sap.ui.define([
 
 	return Controller.extend("punto_medicion_individual.punto_medicion_individual.controller.View1", {
 
-		onInit: function () {
-			const routes = this.getOwnerComponent().getModel("routesJson").getData().routes;
-			this.byId("btnCrearDocumento").setEnabled(false);
-			this._oInput = this.getView().byId("puntoMedida");
-			this.oColModel = new JSONModel(sap.ui.require.toUrl(routes.modelColumnRoot) + "/columnsModel.json");
+		onInit: async function () {
+			//const routes = this.getOwnerComponent().getModel("routesJson").getData().routes;
+			var oContext  = this;
+			var oModelRoutes =  this.getOwnerComponent().getModel("routesJson");
+			oModelRoutes.dataLoaded() //function datalLoaded(), funciona como promesa, esperando que cargue el file en el modelo
+			.then(function(response){
+				var routes = oModelRoutes.getData().routes;
+				oContext.byId("btnCrearDocumento").setEnabled(false);
+				oContext._oInput = oContext.getView().byId("puntoMedida");
+				oContext.oColModel = new JSONModel(sap.ui.require.toUrl(routes.modelColumnRoot) + "/columnsModel.json");
+				console.log(response);
+			})
+			.catch(function(error){
+				console.log(error);
+			});
 		},
 
 		onSearchBtn: function () {
